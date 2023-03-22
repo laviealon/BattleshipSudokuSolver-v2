@@ -1,0 +1,3 @@
+def read_board:
+    tested: True
+    confidence: High
