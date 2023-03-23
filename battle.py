@@ -33,14 +33,80 @@ def surrounded_by_water(copy_board, i, j, symbol, orientation=None):
                     return False
     elif symbol == '<':
         if i == 0 and j == 0:
-            if copy_board[i + 1][j] not in ['.', '0'] and copy_board[i + 1][j + 1] not in ['.', '0']:
+            if copy_board[i + 1][j] not in ['.', '0'] or copy_board[i + 1][j + 1] not in ['.', '0']:
                 return False
         elif i == 0:
-
+            if copy_board[i + 1][j] not in ['.', '0'] or copy_board[i + 1][j - 1] not in ['.', '0'] or copy_board[i][j - 1] not in ['.', '0']:
+                return False
         elif i == len(copy_board) - 1 and j == 0:
+            if copy_board[i - 1][j] not in ['.', '0'] or copy_board[i - 1][j + 1] not in ['.', '0']:
+                return False
         elif i == len(copy_board) - 1:
+            if copy_board[i - 1][j] not in ['.', '0'] or copy_board[i - 1][j - 1] not in ['.', '0'] or copy_board[i][j - 1] not in ['.', '0']:
+                return False
         elif j == 0:
+            if copy_board[i + 1][j] not in ['.', '0'] or copy_board[i - 1][j] not in ['.', '0']:
+                return False
         else:
+            if copy_board[i + 1][j] not in ['.', '0'] or copy_board[i - 1][j] not in ['.', '0'] or copy_board[i][j - 1] not in ['.', '0'] or copy_board[i - 1][j - 1] not in ['.', '0'] or copy_board[i + 1][j - 1] not in ['.', '0']:
+                return False
+    elif symbol == '>':
+        if i == 0 and j == len(copy_board) - 1:
+            if copy_board[i + 1][j] not in ['.', '0']:
+                return False
+        elif i == 0:
+            if copy_board[i + 1][j] not in ['.', '0'] or copy_board[i + 1][j + 1] not in ['.', '0'] or copy_board[i][j + 1] not in ['.', '0']:
+                return False
+        elif i == len(copy_board) - 1 and j == len(copy_board) - 1:
+            if copy_board[i - 1][j] not in ['.', '0']:
+                return False
+        elif i == len(copy_board) - 1:
+            if copy_board[i - 1][j] not in ['.', '0'] or copy_board[i - 1][j + 1] not in ['.', '0'] or copy_board[i][j + 1] not in ['.', '0']:
+                return False
+        elif j == len(copy_board) - 1:
+            if copy_board[i + 1][j] not in ['.', '0'] or copy_board[i - 1][j] not in ['.', '0']:
+                return False
+        else:
+            if copy_board[i + 1][j] not in ['.', '0'] or copy_board[i - 1][j] not in ['.', '0'] or copy_board[i][j + 1] not in ['.', '0'] or copy_board[i - 1][j + 1] not in ['.', '0'] or copy_board[i + 1][j + 1] not in ['.', '0']:
+                return False
+    elif symbol == '^':
+        if i == 0 and j == 0:
+            if copy_board[i][j + 1] not in ['.', '0']:
+                return False
+        elif i == 0 and j == len(copy_board) - 1:
+            if copy_board[i][j - 1] not in ['.', '0']:
+                return False
+        elif i == 0:
+            if copy_board[i][j + 1] not in ['.', '0'] or copy_board[i][j - 1] not in ['.', '0']:
+                return False
+        elif j == 0:
+            if copy_board[i][j + 1] not in ['.', '0'] or copy_board[i - 1][j] not in ['.', '0'] or copy_board[i - 1][j + 1] not in ['.', '0']:
+                return False
+        elif j == len(copy_board) - 1:
+            if copy_board[i][j - 1] not in ['.', '0'] or copy_board[i - 1][j] not in ['.', '0'] or copy_board[i - 1][j - 1] not in ['.', '0']:
+                return False
+        else:
+            if copy_board[i][j + 1] not in ['.', '0'] or copy_board[i - 1][j] not in ['.', '0'] or copy_board[i][j - 1] not in ['.', '0'] or copy_board[i - 1][j - 1] not in ['.', '0'] or copy_board[i - 1][j + 1] not in ['.', '0']:
+                return False
+    elif symbol == 'v':
+        if i == len(copy_board) - 1 and j == 0:
+            if copy_board[i][j + 1] not in ['.', '0']:
+                return False
+        elif i == len(copy_board) - 1 and j == len(copy_board) - 1:
+            if copy_board[i][j - 1] not in ['.', '0']:
+                return False
+        elif i == len(copy_board) - 1:
+            if copy_board[i][j + 1] not in ['.', '0'] or copy_board[i][j - 1] not in ['.', '0']:
+                return False
+        elif j == 0:
+            if copy_board[i][j + 1] not in ['.', '0'] or copy_board[i + 1][j] not in ['.', '0'] or copy_board[i + 1][j + 1] not in ['.', '0']:
+                return False
+        elif j == len(copy_board) - 1:
+            if copy_board[i][j - 1] not in ['.', '0'] or copy_board[i + 1][j] not in ['.', '0'] or copy_board[i + 1][j - 1] not in ['.', '0']:
+                return False
+        else:
+            if copy_board[i][j + 1] not in ['.', '0'] or copy_board[i + 1][j] not in ['.', '0'] or copy_board[i][j - 1] not in ['.', '0'] or copy_board[i + 1][j - 1] not in ['.', '0'] or copy_board[i + 1][j + 1] not in ['.', '0']:
+                return False
     return True
 
 
@@ -63,7 +129,7 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
     if count > int(col_const[col]):
         return False
     # check if ships are composed correctly, and count them
-    ship_count = {'sub': 0, 'destroyer': 0, 'carrier': 0, 'battleship': 0}
+    ship_count = {'sub': 0, 'destroyer': 0, 'cruiser': 0, 'battleship': 0}
     for i in range(len(copy_board)):
         for j in range(len(copy_board)):
             # if you find 'S' make sure it is surrounded by water (and count 1x1)
@@ -126,6 +192,7 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
                         return False
                     else:
                         ship_count['destroyer'] += 1
+                # or that it is followed by 'M' and '>' and both are surrounded by water (and count 1x3).
                 if copy_board[i][j + 1] == 'M':
                     if copy_board[i][j + 2] not in ['>', 'M', '0']:
                         return False
@@ -136,6 +203,7 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
                             return False
                         else:
                             ship_count['cruiser'] += 1
+                    # or that it is followed by 'M', 'M', and '>' and both are surrounded by water (and count 1x4).
                     elif copy_board[i][j + 2] == 'M':
                         if copy_board[i][j + 3] not in ['>', '0']:
                             return False
@@ -146,14 +214,15 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
                                 return False
                             else:
                                 ship_count['battleship'] += 1
-        # or that it is followed by 'M' and '>' and both are surrounded by water (and count 1x3).
-        # or that it is followed by 'M', 'M', and '>' and both are surrounded by water (and count 1x4).
         # if you find '^' make sure it is followed by 'v' and both are surrounded by water (and count 1x2),
         # or that it is followed by 'M' and 'v' and both are surrounded by water (and count 1x3),
         # or that it is followed by 'M', 'M', and 'v' and both are surrounded by water (and count 1x4).
+        # if you find an 'M' ... should be handled by '<' case and 'v' case above, but just in case keep this here
+        # if you find a 'v' ... should be handled by '^' case above, but just in case keep this here
+        # if you find a '>' ... should be handled by '<' case above, but just in case keep this here
     # check ship constraint
         # make sure number of ships aligns with ship constraint
-    return True
+    return True, ship_count
 
 
 def backtracking_search(puzzle_board):
@@ -178,7 +247,7 @@ def backtracking_search(puzzle_board):
 if __name__ == '__main__':
     import sys
     sys.setrecursionlimit(5000000)
-    board = read_board('board.txt')
+    board = read_board('test_files/board.txt')
     backtracking_search(board)
     for row in board:
         print(row)

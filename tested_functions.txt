@@ -1,3 +1,23 @@
 def read_board:
     tested: True
-    confidence: High
+    confidence: 9
+
+def surrounded_by_water:
+    tested: True
+    confidence: 7.5
+    notes:
+        - tested on both fails and passes, both reliable
+        - should check some more random edge cases just in case
+        - reliably efficient despite ridiculous amount of code
+
+def is_valid:
+    version: 1
+        description:
+            - checks if board is valid configuration and conforms to all constraints (except ship number constraints)
+            for symbols '>', '<', 'M', and 'S'
+        tested: True
+        confidence: 6.5
+        notes:
+            - tested on both fails and passes, both decently reliable
+            - should check some more random edge cases just in case
+            - reliably efficient despite ridiculous amount of code
