@@ -14,10 +14,22 @@ def is_valid:
     version: 1
         description:
             - checks if board is valid configuration and conforms to all constraints (except ship number constraints)
-            for symbols '>', '<', 'M', and 'S'
+            for symbols '<' and 'S'
         tested: True
         confidence: 6.5
         notes:
             - tested on both fails and passes, both decently reliable
             - should check some more random edge cases just in case
             - reliably efficient despite ridiculous amount of code
+    version: 2
+        description:
+            - checks if board is valid configuration and conforms to all constraints (except ship number constraints)
+            for symbols '<', 'S', and '^'
+        tested: True
+        confidence: 6.5
+        notes:
+            - tested on both fails and passes, both decently reliable
+            - should check some more random edge cases just in case
+            - reliably efficient despite ridiculous amount of code
+            - may be problems with not checking '>', 'v', and 'M', but I predict these cases are covered
+            by the '<' and '^' cases

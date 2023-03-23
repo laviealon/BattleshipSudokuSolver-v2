@@ -180,7 +180,7 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
                     else:
                         ship_count['sub'] += 1
         # if you find '<' make sure it is followed by '>' and both are surrounded by water (and count 1x2),
-            if copy_board[i][j] == '<':
+            elif copy_board[i][j] == '<':
                 if j == len(copy_board) - 1:
                     return False
                 if copy_board[i][j + 1] not in ['>', 'M', '0']:
@@ -194,6 +194,8 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
                         ship_count['destroyer'] += 1
                 # or that it is followed by 'M' and '>' and both are surrounded by water (and count 1x3).
                 if copy_board[i][j + 1] == 'M':
+                    if j + 1 == len(copy_board) - 1:
+                        return False
                     if copy_board[i][j + 2] not in ['>', 'M', '0']:
                         return False
                     if not surrounded_by_water(copy_board, i, j + 1, 'M', orientation='h'):
@@ -205,6 +207,8 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
                             ship_count['cruiser'] += 1
                     # or that it is followed by 'M', 'M', and '>' and both are surrounded by water (and count 1x4).
                     elif copy_board[i][j + 2] == 'M':
+                        if j + 2 == len(copy_board) - 1:
+                            return False
                         if copy_board[i][j + 3] not in ['>', '0']:
                             return False
                         if not surrounded_by_water(copy_board, i, j + 2, 'M', orientation='h'):
@@ -215,13 +219,53 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
                             else:
                                 ship_count['battleship'] += 1
         # if you find '^' make sure it is followed by 'v' and both are surrounded by water (and count 1x2),
-        # or that it is followed by 'M' and 'v' and both are surrounded by water (and count 1x3),
-        # or that it is followed by 'M', 'M', and 'v' and both are surrounded by water (and count 1x4).
+            elif copy_board[i][j] == '^':
+                if i == len(copy_board) - 1:
+                    return False
+                if copy_board[i + 1][j] not in ['v', 'M', '0']:
+                    return False
+                if not surrounded_by_water(copy_board, i, j, '^'):
+                    return False
+                if copy_board[i + 1][j] == 'v':
+                    if not surrounded_by_water(copy_board, i + 1, j, 'v'):
+                        return False
+                    else:
+                        ship_count['destroyer'] += 1
+                # or that it is followed by 'M' and 'v' and both are surrounded by water (and count 1x3).
+                elif copy_board[i + 1][j] == 'M':
+                    if i + 1 == len(copy_board) - 1:
+                        return False
+                    if copy_board[i + 2][j] not in ['v', 'M', '0']:
+                        return False
+                    if not surrounded_by_water(copy_board, i + 1, j, 'M', orientation='v'):
+                        return False
+                    if copy_board[i + 2][j] == 'v':
+                        if not surrounded_by_water(copy_board, i + 2, j, 'v'):
+                            return False
+                        else:
+                            ship_count['cruiser'] += 1
+                    # or that it is followed by 'M', 'M', and 'v' and all are surrounded by water (and count 1x4).
+                    elif copy_board[i + 2][j] == 'M':
+                        if i + 2 == len(copy_board) - 1:
+                            return False
+                        if copy_board[i + 3][j] not in ['v', '0']:
+                            return False
+                        if not surrounded_by_water(copy_board, i + 2, j, 'M', orientation='v'):
+                            return False
+                        if copy_board[i + 3][j] == 'v':
+                            if not surrounded_by_water(copy_board, i + 3, j, 'v'):
+                                return False
+                            else:
+                                ship_count['battleship'] += 1
         # if you find an 'M' ... should be handled by '<' case and 'v' case above, but just in case keep this here
         # if you find a 'v' ... should be handled by '^' case above, but just in case keep this here
         # if you find a '>' ... should be handled by '<' case above, but just in case keep this here
     # check ship constraint
         # make sure number of ships aligns with ship constraint
+    if ship_count['sub'] > int(ship_const[0]) or ship_count['destroyer'] > int(ship_const[1]) or \
+            ship_count['cruiser'] > int(ship_const[2]) or ship_count['battleship'] > int(ship_const[3]):
+        return False
+
     return True, ship_count
 
 
