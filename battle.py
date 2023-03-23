@@ -1,5 +1,39 @@
+import copy
+
 SYMBOLS = ['S', 'M', '^', 'v', '<', '>', '.']
 
+
+def count_ships(board):
+    ship_count = {'sub': 0, 'destroyer': 0, 'cruiser': 0, 'battleship': 0}
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i][j] == 'S':
+                ship_count['sub'] += 1
+            elif board[i][j] == '^':
+                try:
+                    if board[i - 1][j] == 'v':
+                        ship_count['destroyer'] += 1
+                    elif board[i - 1][j] == 'M' and board[i - 2][j] == 'v':
+                        ship_count['cruiser'] += 1
+                    elif board[i - 1][j] == 'M' and board[i - 2][j] == 'M' and board[i - 3][j] == 'v':
+                        ship_count['battleship'] += 1
+                except IndexError:
+                    pass
+            elif board[i][j] == '<':
+                try:
+                    if board[i][j + 1] == '>':
+                        ship_count['destroyer'] += 1
+                    elif board[i][j + 1] == 'M' and board[i][j + 2] == '>':
+                        ship_count['cruiser'] += 1
+                    elif board[i][j + 1] == 'M' and board[i][j + 2] == 'M' and board[i][j + 3] == '>':
+                        ship_count['battleship'] += 1
+                except IndexError:
+                    pass
+    return ship_count
+                        
+                
+            
+    
 
 def read_board(filename):
     with open(filename) as f:
@@ -110,11 +144,8 @@ def surrounded_by_water(copy_board, i, j, symbol, orientation=None):
     return True
 
 
-def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
+def is_valid(copy_board, row, col, row_const, col_const, ship_const):
     """Checks if the symbol is valid at the given row and column."""
-    # create copy board with symbol at row and col
-    copy_board = board[:]
-    copy_board[row] = copy_board[row][:col] + symbol + copy_board[row][col + 1:]
     # check if row and col constraints are met
     count = 0
     for ch in copy_board[row]:
@@ -266,7 +297,31 @@ def is_valid(board, row, col, symbol, row_const, col_const, ship_const):
             ship_count['cruiser'] > int(ship_const[2]) or ship_count['battleship'] > int(ship_const[3]):
         return False
 
-    return True, ship_count
+    return True
+
+
+def is_valid_solution(board, row_const, col_const, ship_const):
+    for row in range(len(board)):
+        count = 0
+        for ch in board[row]:
+            if ch not in ['.', '0']:
+                count += 1
+        if count != int(row_const[row]):
+            return False
+    for col in range(len(board)):
+        count = 0
+        for i in range(len(board)):
+            if board[i][col] not in ['.', '0']:
+                count += 1
+        if count != int(col_const[col]):
+            return False
+    ship_count = count_ships(board)
+    if ship_count['sub'] != int(ship_const[0]) or ship_count['destroyer'] != int(ship_const[1]) or \
+            ship_count['cruiser'] != int(ship_const[2]) or ship_count['battleship'] != int(ship_const[3]):
+        return False
+    return True
+
+
 
 
 def backtracking_search(puzzle_board):
@@ -274,24 +329,42 @@ def backtracking_search(puzzle_board):
 
     TODO: does this work??
     """
+    seen = set()
     row_const, col_const, ship_const = puzzle_board[0], puzzle_board[1], puzzle_board[2]
     board = puzzle_board[3:]
     dimension = len(board)
+    is_complete = True
+    for row in range(dimension):
+        for col in range(dimension):
+            if board[row][col] == '0':
+                is_complete = False
+                break
+        if not is_complete:
+            break
+    if is_complete:
+        return puzzle_board
     for row in range(dimension):
         for col in range(dimension):
             if board[row][col] == '0':
                 for symbol in SYMBOLS:  # can potentially switch to revise_domain(board, row, col, symbol)
-                    if is_valid(board, row, col, symbol, row_const, col_const, ship_const):
-                        board[row] = board[row][:col] + symbol + board[row][col + 1:]
-                        backtracking_search(puzzle_board)
-                        board[row] = board[row][:col] + '0' + board[row][col + 1:]
-                return
+                    copy_board = board[:]
+                    copy_board[row] = copy_board[row][:col] + symbol + copy_board[row][col + 1:]
+                    if str(copy_board) in seen:
+                        seen.add(str(copy_board))
+                        continue
+                    is_valid_candidate = is_valid(copy_board, row, col, row_const, col_const, ship_const)
+                    if is_valid_candidate:
+                        puzzle_board[3:] = copy_board
+                        result = backtracking_search(puzzle_board)
+                        if result is not None and is_valid_solution(result[3:], row_const, col_const, ship_const):
+                            return result
+    return None
 
 
 if __name__ == '__main__':
     import sys
-    sys.setrecursionlimit(5000000)
+    sys.setrecursionlimit(100000)
     board = read_board('test_files/board.txt')
-    backtracking_search(board)
+    board = backtracking_search(board)
     for row in board:
         print(row)
