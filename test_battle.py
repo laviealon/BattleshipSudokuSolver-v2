@@ -23,4 +23,4 @@ def test_is_valid():
 
 if __name__ == '__main__':
     from pytest import main
-    main(['test.py'])
+    main(['test_battle.py'])
